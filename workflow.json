@@ -1,0 +1,234 @@
+{
+  "name": "RAG Agent and Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1sNUxlBbGh5n-Wq1tTSAlINr3mDqytxkj",
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1sNUxlBbGh5n-Wq1tTSAlINr3mDqytxkj"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "a8ccd335-e64c-4033-ab2e-5ba629351710",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [224, 0],
+      "id": "0e854784-7ec0-42ac-9340-d80a5c7552aa",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "rag-agent-index",
+          "mode": "list",
+          "cachedResultName": "rag-agent-index"
+        },
+        "options": {
+          "pineconeNamespace": "FAQ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [480, 0],
+      "id": "fef5718c-82bb-4709-a1e4-87e85e9db17a",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [368, 240],
+      "id": "93694a68-31ec-4492-9630-f672450535c4",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [576, 224],
+      "id": "14f1a407-0358-43cc-9ba9-b35102519421",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [656, 432],
+      "id": "7f3e2558-fba7-47ed-b25e-611527952e8f",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a customer support agent. You have a tool called \"knowledgeBase\" and your job is to collect policy and FAQ knowledge from this tool and represent it in a user-friendly readable way for the user"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1072, 0],
+      "id": "3a997fca-fcbb-4c3e-aeaf-61487e043a47",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [928, 0],
+      "id": "32912639-26ea-4bc4-a191-ad0f894f66d2",
+      "name": "When chat message received",
+      "webhookId": "bd5410f5-3925-4a35-84d6-1ac415474b5c"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [944, 208],
+      "id": "fd927a2e-0d54-4809-940c-f2882323672a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool to access the policy and FAQ database",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "rag-agent-index",
+          "mode": "list",
+          "cachedResultName": "rag-agent-index"
+        },
+        "options": {
+          "pineconeNamespace": "FAQ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [1392, 240],
+      "id": "2d5540d0-cfb4-4961-b2e1-931943cb3948",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [1488, 448],
+      "id": "cf87c88d-1267-4825-825f-4791caa79b36",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [[{"node": "Download file", "type": "main", "index": 0}]]
+    },
+    "Download file": {
+      "main": [[{"node": "Pinecone Vector Store", "type": "main", "index": 0}]]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [[{"node": "Pinecone Vector Store", "type": "ai_embedding", "index": 0}]]
+    },
+    "Default Data Loader": {
+      "ai_document": [[{"node": "Pinecone Vector Store", "type": "ai_document", "index": 0}]]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [[{"node": "Default Data Loader", "type": "ai_textSplitter", "index": 0}]]
+    },
+    "When chat message received": {
+      "main": [[{"node": "AI Agent", "type": "main", "index": 0}]]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [[{"node": "AI Agent", "type": "ai_languageModel", "index": 0}]]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [[{"node": "Pinecone Vector Store1", "type": "ai_embedding", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
