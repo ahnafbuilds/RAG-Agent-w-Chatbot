@@ -1,6 +1,7 @@
 # 🤖 RAG AI Agent & Chatbot (n8n + Gemini + Pinecone)
 
 An automated **Retrieval-Augmented Generation (RAG)** pipeline built with **n8n**. This project automatically syncs documents from Google Drive, indexes them into a vector database, and provides a conversational AI agent that answers questions based on your specific private data.
+![n8n Workflow Screenshot](Workflow_Screenshot.jpg)
 
 ## ✨ Features
 
