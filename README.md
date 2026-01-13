@@ -82,10 +82,3 @@ git clone https://github.com/YOUR_USERNAME/Rag-Agent-w-Chatbot.git
 - [ ] Implement a "Source Citation" feature so the bot tells you which file it's reading from.
 - [ ] Add a Slack/Discord integration for the chat interface.
 
----
-
-### One final "Pro" tip:
-
-Since you are using **GitHub Desktop**, once you've saved this text into your `README.md` file, GitHub Desktop will show the changes. Just **Commit** and **Push**, and your repo will look incredible!
-
-**Would you like me to help you generate a simple "How to find your Google Drive Folder ID" guide to include in the README?**
